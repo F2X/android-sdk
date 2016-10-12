@@ -12,7 +12,7 @@ RUN dpkg --add-architecture i386 && \
 
 WORKDIR /opt
 
-ARG SDK_VERSION
+ARG SDK_VERSION=24.4.1
 ARG ACCEPT_LICENSES
 
 RUN curl -O http://dl.google.com/android/android-sdk_r${SDK_VERSION}-linux.tgz && \
@@ -24,4 +24,7 @@ WORKDIR android-sdk-linux
 ENV ANDROID_HOME /opt/android-sdk-linux
 ENV PATH $PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
 
-RUN ( while [ 1 ]; do sleep 5; echo ${ACCEPT_LICENSES}; done ) | android update sdk --no-ui
+ARG API_LEVEL=24
+ARG FILTERED_PACKAGES=tool,platform-tool,android-${API_LEVEL},addon-google_apis-google-${API_LEVEL},extra-google-webdriver
+
+RUN ( while [ 1 ]; do sleep 5; echo ${ACCEPT_LICENSES}; done ) | android update sdk -t ${FILTERED_PACKAGES} -u
